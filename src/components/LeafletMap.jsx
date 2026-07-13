@@ -28,10 +28,16 @@ export default function LeafletMap({ lat, lng, zoom = 16, label }) {
     })
     L.marker([lat, lng], { icon }).addTo(map).bindPopup(label || 'Lokasi Gerobak')
 
-    // Pastikan ukuran benar setelah render (kadang container belum siap saat init).
-    setTimeout(() => map.invalidateSize(), 200)
+    // Perbaiki "tile abu-abu": paksa Leaflet hitung ulang ukuran container
+    // beberapa kali (kadang container belum final saat init) + saat resize.
+    const fix = () => map.invalidateSize()
+    const timers = [50, 200, 500, 1000].map((t) => setTimeout(fix, t))
+    const ro = new ResizeObserver(fix)
+    ro.observe(elRef.current)
 
     return () => {
+      timers.forEach(clearTimeout)
+      ro.disconnect()
       map.remove()
       mapRef.current = null
     }
