@@ -1,6 +1,8 @@
 import { useStore } from '../store/StoreContext'
-import RunwayDivider from './RunwayDivider'
+import Marquee from './Marquee'
 import LeafletMap from './LeafletMap'
+
+const LOKASI_ITEMS = ['MAMPIR YUK', 'GEROBAK BANDARA', 'BUKA 15.00 – 22.00', 'CUS KE LOKASI', 'ANTAR SEGERA HADIR']
 
 // Peta lokasi gerobak.
 // - Default: peta Leaflet + tile OpenStreetMap (andal, interaktif, tanpa API key).
@@ -21,8 +23,9 @@ export default function LocationMap() {
   const openMaps = `https://www.google.com/maps/search/?api=1&query=${q}`
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-6">
-      <RunwayDivider className="mb-5" />
+    <section className="py-6">
+      <Marquee items={LOKASI_ITEMS} />
+      <div className="mx-auto mt-5 max-w-xl px-4">
       <h3 className="mb-1 text-xl font-extrabold text-brand-red">📍 Lokasi Gerobak</h3>
       <p className="mb-3 text-sm text-brand-brown/70">{locationLabel || area}</p>
 
@@ -50,6 +53,7 @@ export default function LocationMap() {
         <a href={openMaps} target="_blank" rel="noopener noreferrer" className="btn-outline py-3 text-sm">
           🗺️ Buka di Maps
         </a>
+      </div>
       </div>
     </section>
   )

@@ -13,6 +13,21 @@
   }
 }
 
+/* Animasi teks berjalan (running text) — didefinisikan langsung di CSS
+   supaya pasti jalan di semua kondisi (tidak bergantung config Tailwind). */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-scroll 18s linear infinite;
+  will-change: transform;
+}
+
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-2xl font-semibold
