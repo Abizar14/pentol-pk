@@ -42,6 +42,11 @@ export const business = {
 // Level sambal yang bisa dipilih pelanggan
 export const spiceLevels = ['Tidak Pedas', 'Sedang', 'Extra Pedas']
 
+// URL Google Apps Script Web App untuk MENCATAT pesanan ke tab "Pesanan".
+// Kosongkan '' = fitur mati (pesanan tetap jalan via WhatsApp, cuma tidak dicatat).
+// Cara dapat URL: lihat sheet-template/catat-pesanan.gs + README.
+export const orderLogUrl = ''
+
 // Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
 export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
 

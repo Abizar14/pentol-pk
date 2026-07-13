@@ -3,6 +3,7 @@ import { rupiah, isOpen, isValidPhone } from '../utils/format'
 import { spiceLevels, paymentMethods } from '../data/config'
 import { useStore } from '../store/StoreContext'
 import { buildWhatsappUrl } from '../utils/whatsapp'
+import { logOrder } from '../utils/logOrder'
 import QtyStepper from './QtyStepper'
 
 // Sheet (modal geser dari bawah) berisi keranjang + checkout + tombol WhatsApp.
@@ -83,6 +84,22 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
       businessName: business.name,
       whatsapp: business.whatsapp,
     })
+
+    // Catat pesanan ke Google Sheet (kalau orderLogUrl diisi). Fire-and-forget.
+    logOrder({
+      nama: name.trim(),
+      hp: phone.trim(),
+      metode: method === 'antar' ? 'Diantar' : 'Ambil Sendiri',
+      pembayaran: payment === 'qris' ? 'QRIS' : 'COD',
+      sambal: spice,
+      catatan: note.trim(),
+      alamat: method === 'antar' ? address.trim() : '',
+      items: cart.map((i) => `${i.qty}x ${i.name}`).join('; '),
+      subtotal,
+      ongkir: deliveryFee,
+      total,
+    })
+
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
