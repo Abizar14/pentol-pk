@@ -164,13 +164,19 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
                   <button onClick={() => setMethod('ambil')} className={optionBtn(method === 'ambil')}>
                     🏃 Ambil Sendiri
                   </button>
-                  <button onClick={() => setMethod('antar')} className={optionBtn(method === 'antar')}>
-                    ✈️ Diantar
+                  {/* Diantar dinonaktifkan dulu — sistem masih ambil sendiri */}
+                  <button
+                    type="button"
+                    disabled
+                    className="relative cursor-not-allowed rounded-xl bg-brand-creamdark px-2 py-2.5 text-sm font-semibold text-brand-brown/40 ring-1 ring-brand-brown/10"
+                  >
+                    🛵 Diantar
+                    <span className="mt-0.5 block text-[10px] font-bold text-brand-orange">Segera Hadir</span>
                   </button>
                 </div>
-                {method === 'antar' && (
-                  <p className="mt-1 text-xs text-brand-brown/60">Ongkir {business.deliveryNote}</p>
-                )}
+                <p className="mt-1 text-xs text-brand-brown/60">
+                  Untuk sekarang khusus <b>Ambil Sendiri</b> ya. Layanan antar segera hadir! 🛵
+                </p>
               </div>
 
               {/* Metode pembayaran */}
