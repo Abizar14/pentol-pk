@@ -29,8 +29,8 @@ export const business = {
   // Cara ambil koordinat: buka Google Maps, klik-KANAN di titik lokasimu →
   // angka pertama = lat, angka kedua = lng. Klik angkanya untuk menyalin.
   // (Bisa juga diatur dari tab Info sheet: key `lat`, `lng`, `mapZoom`.)
-  lat: -0.365543, // lokasi gerobak
-  lng: 117.266746,
+  lat: -0.365576, // lokasi gerobak (titik pas dari Google Maps)
+  lng: 117.266725,
   mapZoom: 16,
   locationLabel: 'Gerobak kami mangkal di sini 🛺',
   // API key Google Maps Embed (biar peta muncul mulus, resmi Google).
