@@ -12,7 +12,14 @@ export default function Header() {
         <Logo className="h-11 w-11" emojiClass="text-2xl" />
         <div className="leading-tight">
           <h1 className="text-lg font-extrabold">{business.name}</h1>
-          <p className="text-[11px] text-brand-cream/80">📍 {business.area}</p>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${business.lat},${business.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-semibold text-brand-amber underline decoration-brand-amber/50 underline-offset-2"
+          >
+            📍 Klik untuk lihat lokasi
+          </a>
         </div>
       </div>
     </header>

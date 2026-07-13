@@ -7,6 +7,7 @@ export default function Footer() {
   const waHref = `https://wa.me/${business.whatsapp}?text=${encodeURIComponent(
     `Halo ${business.name}, mau tanya-tanya dulu 🙏`,
   )}`
+  const mapsHref = `https://www.google.com/maps/search/?api=1&query=${business.lat},${business.lng}`
 
   return (
     <footer className="mx-auto max-w-xl px-4 pb-8 pt-2">
@@ -20,7 +21,14 @@ export default function Footer() {
 
         <div className="space-y-1.5 text-sm text-brand-cream/90">
           <p>🕒 {business.openLabel}</p>
-          <p>📍 {business.area}</p>
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 font-semibold text-brand-amber underline decoration-brand-amber/50 underline-offset-2"
+          >
+            📍 Klik untuk lihat lokasi
+          </a>
         </div>
 
         <a
