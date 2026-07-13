@@ -42,6 +42,21 @@ export const business = {
 // Level sambal yang bisa dipilih pelanggan
 export const spiceLevels = ['Tidak Pedas', 'Sedang', 'Extra Pedas']
 
+// Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
+export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
+
+// ID menu yang dapat badge "TERLARIS 🔥". Cocokkan dengan id di sheet/menu.js.
+export const bestsellers = ['pentol-biasa', 'paket-komplit']
+
+// Harga coret (harga normal sebelum hemat) untuk badge HEMAT + harga dicoret.
+// Bisa juga diatur dari kolom `oldprice` di Google Sheet (menimpa nilai di sini).
+export const oldPrices = {
+  'paket-ngemil': 12000,
+  'paket-komplit': 23000,
+  'combo-ngemil': 12500,
+  'combo-komplit': 23000,
+}
+
 // Metode pembayaran. QRIS = QRIS statis (scan lalu kirim bukti via WA), COD = bayar di tempat.
 export const paymentMethods = [
     { key: 'cod', label: 'COD (Bayar di Tempat)', icon: '💵' },

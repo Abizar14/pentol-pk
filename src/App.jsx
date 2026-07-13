@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useStore } from './store/StoreContext'
 import Header from './components/Header'
+import FloatingWhatsApp from './components/FloatingWhatsApp'
+import Toast from './components/Toast'
 import Hero from './components/Hero'
 import MenuList from './components/MenuList'
 import CartBar from './components/CartBar'
@@ -36,6 +38,21 @@ export default function App() {
     })
   const qtyOf = (id) => qtyById[id] || 0
 
+  // Toast "ditambahkan" — id naik tiap panggil supaya animasi selalu replay.
+  const [toast, setToast] = useState({ msg: '', id: 0 })
+  const toastTimer = useRef(null)
+  const showToast = (msg) => {
+    setToast((t) => ({ msg, id: t.id + 1 }))
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast((t) => ({ ...t, msg: '' })), 1800)
+  }
+  // Tambah dari menu = inc + munculkan toast dengan nama item.
+  const addFromMenu = (id) => {
+    inc(id)
+    const item = menu.find((m) => m.id === id)
+    if (item) showToast(`${item.name} ditambahkan`)
+  }
+
   // Gabungkan data menu dengan qty jadi array keranjang siap pakai.
   const cart = useMemo(
     () =>
@@ -63,7 +80,7 @@ export default function App() {
 
         {/* Teks berjalan (pembatas antar-section) */}
         <Marquee />
-        <MenuList menu={menu} qtyOf={qtyOf} onInc={inc} onDec={dec} />
+        <MenuList menu={menu} qtyOf={qtyOf} onInc={addFromMenu} onDec={dec} />
 
         <Marquee items={LOKASI_ITEMS} />
         <LocationMap />
@@ -73,6 +90,9 @@ export default function App() {
 
       {/* Padding bawah biar konten tidak ketutup CartBar */}
       <div className="h-20" />
+
+      <FloatingWhatsApp />
+      <Toast key={toast.id} message={toast.msg} />
 
       <CartBar count={count} subtotal={subtotal} onOpen={() => setSheetOpen(true)} />
       <CheckoutSheet

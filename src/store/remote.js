@@ -23,6 +23,8 @@ function mapMenu(objs) {
       desc: o.desc || '',
       emoji: o.emoji || '🍡',
       image: o.image || null,
+      oldPrice: num(o.oldprice) || null, // harga coret (opsional)
+      badge: o.badge || null, // label khusus, mis. "TERLARIS" (opsional)
     }))
 }
 
