@@ -36,30 +36,29 @@ export default function MenuList({ menu, qtyOf, onInc, onDec }) {
           const isBest = badge && badge.startsWith('TERLARIS')
           return (
             <li key={item.id} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5">
-              {/* Gambar menu */}
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-cream text-4xl">
-                {item.image ? (
-                  <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
-                ) : (
-                  <span>{item.emoji}</span>
+              {/* Gambar menu + badge di pojok (di dalam gambar, tidak terpotong) */}
+              <div className="relative h-16 w-16 flex-shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-brand-cream text-4xl">
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <span>{item.emoji}</span>
+                  )}
+                </div>
+                {badge && (
+                  <span
+                    className={`absolute left-1 top-1 whitespace-nowrap rounded-md px-1 py-0.5 text-[8px] font-extrabold uppercase leading-none text-white shadow ${
+                      isBest ? 'bg-brand-red' : 'bg-brand-orange'
+                    }`}
+                  >
+                    {badge}
+                  </span>
                 )}
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    {/* Badge pill di atas nama — responsif, tidak terpotong */}
-                    {badge && (
-                      <span
-                        className={`mb-1 inline-block rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-white ${
-                          isBest ? 'bg-brand-red' : 'bg-brand-orange'
-                        }`}
-                      >
-                        {badge}
-                      </span>
-                    )}
-                    <h4 className="font-bold leading-tight">{item.name}</h4>
-                  </div>
+                  <h4 className="min-w-0 font-bold leading-tight">{item.name}</h4>
                   <div className="flex flex-shrink-0 flex-col items-end leading-none">
                     {old && <span className="text-[10px] text-brand-brown/40 line-through">{rupiah(old)}</span>}
                     <span className="whitespace-nowrap font-bold text-brand-red">{rupiah(item.price)}</span>
