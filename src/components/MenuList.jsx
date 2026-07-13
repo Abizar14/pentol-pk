@@ -5,8 +5,9 @@ import QtyStepper from './QtyStepper'
 // Setiap item menampilkan qty yang sudah ada di keranjang.
 export default function MenuList({ menu, qtyOf, onInc, onDec }) {
   return (
-    <section id="menu" className="mx-auto max-w-xl px-4 py-6">
-      <h3 className="mb-4 text-xl font-extrabold text-brand-red">🍽️ Menu Kami</h3>
+    <section id="menu" className="mx-auto max-w-xl px-4 py-8">
+      <h3 className="text-xl font-extrabold text-brand-red">🍽️ Menu Kami</h3>
+      <p className="mb-4 text-sm text-brand-brown/60">Pilih pentol favoritmu, tap + untuk menambah 🍡</p>
       <ul className="space-y-3">
         {menu.map((item) => {
           const qty = qtyOf(item.id)

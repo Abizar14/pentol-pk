@@ -8,10 +8,13 @@ import CheckoutSheet from './components/CheckoutSheet'
 import InstallPrompt from './components/InstallPrompt'
 import Marquee from './components/Marquee'
 import LocationMap from './components/LocationMap'
+import Footer from './components/Footer'
+
+const LOKASI_ITEMS = ['MAMPIR YUK', 'GEROBAK BANDARA', 'BUKA 15.00 – 22.00', 'CUS KE LOKASI', 'ANTAR SEGERA HADIR']
 
 export default function App() {
-  // Data menu & info toko (lokal, atau dari Google Sheets kalau diaktifkan).
-  const { business, menu } = useStore()
+  // Data menu (lokal, atau dari Google Sheets kalau diaktifkan).
+  const { menu } = useStore()
   // State keranjang: { [id]: qty }. Sesuai permintaan: pakai React state saja.
   const [qtyById, setQtyById] = useState({})
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -54,21 +57,22 @@ export default function App() {
       <Hero minPrice={minPrice} onOrderClick={scrollToMenu} />
 
       <main>
-        <div className="mx-auto max-w-xl px-4">
+        <div className="mx-auto max-w-xl px-4 pt-4">
           <InstallPrompt />
         </div>
-        {/* Teks berjalan bertema bandara */}
+
+        {/* Teks berjalan (pembatas antar-section) */}
         <Marquee />
         <MenuList menu={menu} qtyOf={qtyOf} onInc={inc} onDec={dec} />
+
+        <Marquee items={LOKASI_ITEMS} />
         <LocationMap />
+
+        <Footer />
       </main>
 
       {/* Padding bawah biar konten tidak ketutup CartBar */}
-      <div className="h-24" />
-
-      <footer className="mx-auto max-w-xl px-4 pb-6 text-center text-xs text-brand-brown/50">
-        {business.emoji} {business.name} · {business.openLabel} · {business.area}
-      </footer>
+      <div className="h-20" />
 
       <CartBar count={count} subtotal={subtotal} onOpen={() => setSheetOpen(true)} />
       <CheckoutSheet
