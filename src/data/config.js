@@ -45,7 +45,7 @@ export const spiceLevels = ['Tidak Pedas', 'Sedang', 'Extra Pedas']
 // URL Google Apps Script Web App untuk MENCATAT pesanan ke tab "Pesanan".
 // Kosongkan '' = fitur mati (pesanan tetap jalan via WhatsApp, cuma tidak dicatat).
 // Cara dapat URL: lihat sheet-template/catat-pesanan.gs + README.
-export const orderLogUrl = ''
+export const orderLogUrl = 'https://script.google.com/macros/s/AKfycbyS5lwGH6i7XhBQoenyMt4cBBV5YVJiDUfepzBcDuNP01Iug5K7eIMDny0P1hYT2pOT9w/exec'
 
 // Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
 export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
