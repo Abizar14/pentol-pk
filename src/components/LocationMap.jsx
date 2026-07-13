@@ -24,7 +24,8 @@ export default function LocationMap() {
       <h3 className="mb-1 text-xl font-extrabold text-brand-red">📍 Lokasi Gerobak</h3>
       <p className="mb-3 text-sm text-brand-brown/70">{locationLabel || area}</p>
 
-      <div className="overflow-hidden rounded-2xl shadow-md ring-1 ring-brand-brown/10">
+      {/* relative z-0 = kurung z-index tinggi Leaflet biar tidak nembus header */}
+      <div className="relative z-0 overflow-hidden rounded-2xl shadow-md ring-1 ring-brand-brown/10">
         {hasKey ? (
           // Ada API key → peta Google interaktif
           <iframe
