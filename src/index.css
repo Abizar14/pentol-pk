@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-brand-cream text-brand-brown antialiased;
+    /* Aman untuk notch / home indicator di HP */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl font-semibold
+           transition active:scale-95 disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn bg-brand-red text-white shadow-lg shadow-brand-red/30 hover:bg-brand-dark;
+  }
+  .btn-outline {
+    @apply btn border-2 border-brand-red text-brand-red bg-white hover:bg-brand-red hover:text-white;
+  }
+}
