@@ -35,11 +35,17 @@ export default {
           '50%': { transform: 'translateX(60%) translateY(-6px)' },
           '100%': { transform: 'translateX(140%) translateY(0)' },
         },
+        // Teks berjalan (running text) — geser 1 set penuh lalu ulang mulus
+        'marquee': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'slide-up': 'slide-up 0.25s ease-out',
         'pop': 'pop 0.2s ease-out',
         'fly': 'fly 8s linear infinite',
+        'marquee': 'marquee 18s linear infinite',
       },
       backgroundImage: {
         // Motif garis landasan (runway stripes)

@@ -6,7 +6,7 @@ import MenuList from './components/MenuList'
 import CartBar from './components/CartBar'
 import CheckoutSheet from './components/CheckoutSheet'
 import InstallPrompt from './components/InstallPrompt'
-import RunwayDivider from './components/RunwayDivider'
+import Marquee from './components/Marquee'
 import LocationMap from './components/LocationMap'
 
 export default function App() {
@@ -56,8 +56,9 @@ export default function App() {
       <main>
         <div className="mx-auto max-w-xl px-4">
           <InstallPrompt />
-          <RunwayDivider className="mt-5" />
         </div>
+        {/* Teks berjalan bertema bandara */}
+        <Marquee />
         <MenuList menu={menu} qtyOf={qtyOf} onInc={inc} onDec={dec} />
         <LocationMap />
       </main>
