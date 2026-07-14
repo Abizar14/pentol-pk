@@ -63,7 +63,7 @@ export const bestsellers = ['pentol-biasa', 'paket-komplit']
 export const oldPrices = {
     'paket-ngemil': 12000,
     'paket-komplit': 23000,
-    'combo-ngemil': 12500,
+    'combo-ngemil': 12000,
     'combo-komplit': 23000,
 }
 
