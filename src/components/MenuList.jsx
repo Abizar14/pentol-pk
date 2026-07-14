@@ -16,6 +16,11 @@ function getOldPrice(item) {
 
 // Daftar menu (dari props — bisa data lokal atau Google Sheets).
 export default function MenuList({ menu, qtyOf, onInc, onDec }) {
+  // Urutkan: yang tersedia di atas, yang stok kosong (SEGERA HADIR) di bawah.
+  // Sort stabil → urutan asli dalam tiap grup tetap.
+  const items = [...menu].sort(
+    (a, b) => Number(a.available === false) - Number(b.available === false),
+  )
   return (
     <section id="menu" className="mx-auto max-w-xl px-4 py-8">
       {/* Banner promo */}
@@ -29,7 +34,7 @@ export default function MenuList({ menu, qtyOf, onInc, onDec }) {
       <p className="mb-4 text-sm text-brand-brown/60">Pilih pentol favoritmu, tap + untuk menambah 🍡</p>
 
       <ul className="space-y-3">
-        {menu.map((item) => {
+        {items.map((item) => {
           const qty = qtyOf(item.id)
           const available = item.available !== false // default: tersedia
           const badge = available ? getBadge(item) : null

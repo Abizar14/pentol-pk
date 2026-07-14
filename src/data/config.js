@@ -50,7 +50,7 @@ export const orderLogUrl = 'https://script.google.com/macros/s/AKfycbyS5lwGH6i7X
 // Label untuk menu yang stoknya kosong (available tidak dicentang).
 // Item TIDAK dihilangkan — tetap tampil tapi diberi tanda ini & tidak bisa dipesan.
 // Ganti sesukamu, mis. 'SEGERA HADIR' atau 'SOON'.
-export const soldOutLabel = 'HABIS'
+export const soldOutLabel = 'SEGERA HADIR' // atau 'SOON'
 
 // Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
 export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
