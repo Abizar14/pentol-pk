@@ -11,7 +11,7 @@ export const business = {
     // Jam operasional (format 24 jam) untuk papan status penerbangan
     openHour: 15, // 15.00
     closeHour: 22, // 22.00
-    openLabel: '14.00 – 23.59 WITA',
+    openLabel: '14.00 – 02.00 WITA',
     area: 'Sekitar Jl. Bandara, Samarinda',
     emoji: '✈️',
     // Ongkir untuk pesanan diantar (flat). Ubah ke 0 jika gratis ongkir.
@@ -53,7 +53,7 @@ export const orderLogUrl = 'https://script.google.com/macros/s/AKfycbyS5lwGH6i7X
 export const soldOutLabel = 'SEGERA HADIR' // atau 'SOON'
 
 // Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
-export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
+export const promoBanner = '🔥 Kriwil & Daging gurih kenyal, sambal nampol — pesan sekarang! Paket & Combo segera hadir 🚀'
 
 // ID menu yang dapat badge "TERLARIS 🔥". Cocokkan dengan id di sheet/menu.js.
 export const bestsellers = ['pentol-biasa', 'paket-komplit']
