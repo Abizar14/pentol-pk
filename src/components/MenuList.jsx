@@ -1,5 +1,5 @@
 import { rupiah } from '../utils/format'
-import { promoBanner, bestsellers, oldPrices } from '../data/config'
+import { promoBanner, bestsellers, oldPrices, soldOutLabel } from '../data/config'
 import QtyStepper from './QtyStepper'
 
 // Tentukan badge & harga coret sebuah item.
@@ -31,20 +31,32 @@ export default function MenuList({ menu, qtyOf, onInc, onDec }) {
       <ul className="space-y-3">
         {menu.map((item) => {
           const qty = qtyOf(item.id)
-          const badge = getBadge(item)
-          const old = getOldPrice(item)
+          const available = item.available !== false // default: tersedia
+          const badge = available ? getBadge(item) : null
+          const old = available ? getOldPrice(item) : null
           const isBest = badge && badge.startsWith('TERLARIS')
           return (
-            <li key={item.id} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5">
-              {/* Gambar menu + badge di pojok (di dalam gambar, tidak terpotong) */}
+            <li
+              key={item.id}
+              className={`flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5 ${
+                available ? '' : 'opacity-80'
+              }`}
+            >
+              {/* Gambar menu + badge di pojok */}
               <div className="relative h-16 w-16 flex-shrink-0">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-brand-cream text-4xl">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className={`h-full w-full object-cover ${available ? '' : 'grayscale'}`}
+                    />
                   ) : (
-                    <span>{item.emoji}</span>
+                    <span className={available ? '' : 'grayscale'}>{item.emoji}</span>
                   )}
                 </div>
+
+                {/* Badge promo (kalau tersedia) */}
                 {badge && (
                   <span
                     className={`absolute left-1 top-1 whitespace-nowrap rounded-md px-1 py-0.5 text-[8px] font-extrabold uppercase leading-none text-white shadow ${
@@ -54,6 +66,15 @@ export default function MenuList({ menu, qtyOf, onInc, onDec }) {
                     {badge}
                   </span>
                 )}
+
+                {/* Overlay label saat stok kosong */}
+                {!available && (
+                  <span className="absolute inset-0 flex items-center justify-center rounded-xl bg-brand-brown/55">
+                    <span className="rounded bg-brand-brown px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-brand-cream">
+                      {soldOutLabel}
+                    </span>
+                  </span>
+                )}
               </div>
 
               <div className="min-w-0 flex-1">
@@ -61,20 +82,29 @@ export default function MenuList({ menu, qtyOf, onInc, onDec }) {
                   <h4 className="min-w-0 font-bold leading-tight">{item.name}</h4>
                   <div className="flex flex-shrink-0 flex-col items-end leading-none">
                     {old && <span className="text-[10px] text-brand-brown/40 line-through">{rupiah(old)}</span>}
-                    <span className="whitespace-nowrap font-bold text-brand-red">{rupiah(item.price)}</span>
+                    <span
+                      className={`whitespace-nowrap font-bold ${available ? 'text-brand-red' : 'text-brand-brown/40'}`}
+                    >
+                      {rupiah(item.price)}
+                    </span>
                   </div>
                 </div>
                 <p className="mt-0.5 line-clamp-2 text-xs text-brand-brown/70">{item.desc}</p>
 
                 <div className="mt-2 flex items-center justify-between">
-                  {old ? (
+                  {available && old ? (
                     <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">
                       Hemat {rupiah(old - item.price)}
                     </span>
                   ) : (
                     <span />
                   )}
-                  {qty > 0 ? (
+
+                  {!available ? (
+                    <span className="rounded-full bg-brand-brown/10 px-4 py-1.5 text-sm font-semibold text-brand-brown/50">
+                      {soldOutLabel}
+                    </span>
+                  ) : qty > 0 ? (
                     <QtyStepper qty={qty} size="sm" onDec={() => onDec(item.id)} onInc={() => onInc(item.id)} />
                   ) : (
                     <button

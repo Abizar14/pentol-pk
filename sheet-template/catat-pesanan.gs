@@ -42,7 +42,7 @@ function doPost(e) {
     }
 
     sh.appendRow([
-      new Date(),
+      Utilities.formatDate(new Date(), 'Asia/Makassar', 'dd/MM/yyyy HH:mm:ss'), // WITA
       data.nama || '',
       data.hp || '',
       data.metode || '',

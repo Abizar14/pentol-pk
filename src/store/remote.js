@@ -14,8 +14,6 @@ function num(v) {
 function mapMenu(objs) {
   return objs
     .filter((o) => o.id && o.name)
-    // Baris dengan available = FALSE / TIDAK / 0 dianggap habis → disembunyikan
-    .filter((o) => !['false', 'tidak', '0', 'no'].includes((o.available || '').toLowerCase()))
     .map((o) => ({
       id: o.id,
       name: o.name,
@@ -25,6 +23,8 @@ function mapMenu(objs) {
       image: o.image || null,
       oldPrice: num(o.oldprice) || null, // harga coret (opsional)
       badge: o.badge || null, // label khusus, mis. "TERLARIS" (opsional)
+      // available FALSE/TIDAK/0 = stok kosong → tetap tampil tapi ditandai (bukan disembunyikan)
+      available: !['false', 'tidak', '0', 'no'].includes((o.available || '').toLowerCase()),
     }))
 }
 

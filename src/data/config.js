@@ -47,6 +47,11 @@ export const spiceLevels = ['Tidak Pedas', 'Sedang', 'Extra Pedas']
 // Cara dapat URL: lihat sheet-template/catat-pesanan.gs + README.
 export const orderLogUrl = 'https://script.google.com/macros/s/AKfycbyS5lwGH6i7XhBQoenyMt4cBBV5YVJiDUfepzBcDuNP01Iug5K7eIMDny0P1hYT2pOT9w/exec'
 
+// Label untuk menu yang stoknya kosong (available tidak dicentang).
+// Item TIDAK dihilangkan — tetap tampil tapi diberi tanda ini & tidak bisa dipesan.
+// Ganti sesukamu, mis. 'SEGERA HADIR' atau 'SOON'.
+export const soldOutLabel = 'HABIS'
+
 // Banner promo di atas menu. Kosongkan '' untuk menyembunyikan.
 export const promoBanner = '🎉 Paket & Combo lebih hemat daripada beli satuan — cobain sekarang!'
 
