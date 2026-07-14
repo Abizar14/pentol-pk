@@ -4,9 +4,15 @@ export function rupiah(n) {
 }
 
 // Cek apakah toko sedang buka berdasarkan jam sekarang.
+// Mendukung jam yang MELEWATI tengah malam, mis. buka 14 tutup 2 (dini hari).
 export function isOpen(openHour, closeHour, now = new Date()) {
   const h = now.getHours() + now.getMinutes() / 60
-  return h >= openHour && h < closeHour
+  if (closeHour > openHour) {
+    // Jam normal dalam satu hari, mis. 14–22
+    return h >= openHour && h < closeHour
+  }
+  // Jam lewat tengah malam, mis. buka 14 tutup 02 → buka bila h>=14 ATAU h<02
+  return h >= openHour || h < closeHour
 }
 
 // Validasi nomor HP Indonesia. Terima format 08xxx, 62xxx, atau +62xxx.
