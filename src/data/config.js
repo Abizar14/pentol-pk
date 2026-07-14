@@ -11,7 +11,7 @@ export const business = {
     // Jam operasional (format 24 jam) untuk papan status penerbangan
     openHour: 15, // 15.00
     closeHour: 22, // 22.00
-    openLabel: '15.00 – 22.00 WITA',
+    openLabel: '14.00 – 23.59 WITA',
     area: 'Sekitar Jl. Bandara, Samarinda',
     emoji: '✈️',
     // Ongkir untuk pesanan diantar (flat). Ubah ke 0 jika gratis ongkir.
@@ -56,10 +56,10 @@ export const bestsellers = ['pentol-biasa', 'paket-komplit']
 // Harga coret (harga normal sebelum hemat) untuk badge HEMAT + harga dicoret.
 // Bisa juga diatur dari kolom `oldprice` di Google Sheet (menimpa nilai di sini).
 export const oldPrices = {
-  'paket-ngemil': 12000,
-  'paket-komplit': 23000,
-  'combo-ngemil': 12500,
-  'combo-komplit': 23000,
+    'paket-ngemil': 12000,
+    'paket-komplit': 23000,
+    'combo-ngemil': 12500,
+    'combo-komplit': 23000,
 }
 
 // Metode pembayaran. QRIS = QRIS statis (scan lalu kirim bukti via WA), COD = bayar di tempat.

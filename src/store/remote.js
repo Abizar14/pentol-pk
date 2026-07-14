@@ -28,15 +28,22 @@ function mapMenu(objs) {
     }))
 }
 
-// Petakan tab "Info" langsung dari baris CSV: kolom-1 = key, kolom-2 = value.
-// Dibaca per POSISI kolom (bukan nama header) agar tetap jalan walau baris
-// header berantakan saat impor. Baris "key" (header) otomatis dilewati.
+// Petakan tab "Info": kolom-1 = key, value = sel TERISI pertama sesudahnya.
+// Ambil sel terisi pertama (kolom B, lalu C, dst) supaya tetap kebaca walau
+// nilainya tidak sengaja ke-geser satu kolom. Baris "key" (header) dilewati.
 function mapInfo(rows) {
   const m = {}
   rows.forEach((r) => {
     const key = (r[0] || '').trim().toLowerCase()
-    const val = (r[1] || '').trim()
-    if (key && key !== 'key') m[key] = val
+    if (!key || key === 'key') return
+    let val = ''
+    for (let i = 1; i < r.length; i++) {
+      if (String(r[i] || '').trim() !== '') {
+        val = String(r[i]).trim()
+        break
+      }
+    }
+    m[key] = val
   })
   const out = {}
   if (m.name) out.name = m.name
