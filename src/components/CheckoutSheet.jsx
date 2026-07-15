@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { rupiah, isOpen, isValidPhone } from '../utils/format'
-import { spiceLevels, paymentMethods } from '../data/config'
+import { spiceLevels, paymentMethods, categories, defaultCategory } from '../data/config'
 import { useStore } from '../store/StoreContext'
 import { buildWhatsappUrl } from '../utils/whatsapp'
 import { logOrder } from '../utils/logOrder'
@@ -22,6 +22,17 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
   const [coords, setCoords] = useState(null) // { lat, lng } dari GPS
   const [geoStatus, setGeoStatus] = useState('idle') // idle | loading | ok | error
   const [geoMsg, setGeoMsg] = useState('')
+  // Kalau keranjang punya >1 kategori, checkout dipecah jadi beberapa pesanan WA.
+  const [pendingGroups, setPendingGroups] = useState(null)
+  const [sentCats, setSentCats] = useState([])
+
+  // Reset panel kirim-terpisah tiap sheet dibuka/ditutup.
+  useEffect(() => {
+    if (!open) {
+      setPendingGroups(null)
+      setSentCats([])
+    }
+  }, [open])
 
   // Ambil lokasi pelanggan via GPS browser (butuh HTTPS / localhost).
   function ambilLokasi() {
@@ -53,54 +64,91 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
   }
 
   const subtotal = useMemo(() => cart.reduce((s, i) => s + i.price * i.qty, 0), [cart])
-  const deliveryFee = method === 'antar' ? business.deliveryFee : 0
+
+  // Kategori yang ada di keranjang + apakah ada yang bisa diantar (mis. Nasi Bakar).
+  const cartCats = useMemo(() => [...new Set(cart.map((i) => i.category || defaultCategory))], [cart])
+  const canDeliver = cartCats.some((c) => categories[c]?.delivery)
+
+  // Ongkir = jumlah ongkir tiap kategori yang bisa diantar (kalau metode = antar).
+  const deliveryFee =
+    method === 'antar'
+      ? cartCats.reduce((s, c) => s + (categories[c]?.delivery ? categories[c].deliveryFee || 0 : 0), 0)
+      : 0
   const total = subtotal + deliveryFee
 
   // ── Aturan anti pesanan fiktif ──
   const storeOpen = isOpen(business.openHour, business.closeHour) // kunci checkout saat tutup
   const nameOk = name.trim().length > 0
   const phoneOk = isValidPhone(phone) // No. HP wajib & valid
-  const addressOk = method === 'ambil' || address.trim().length > 0
+  const needAddress = method === 'antar' && canDeliver
+  const addressOk = !needAddress || address.trim().length > 0
   const minOrderOk = subtotal >= (business.minOrder || 0) // minimal order
 
   const canSubmit = cart.length > 0 && nameOk && phoneOk && addressOk && minOrderOk && storeOpen
 
+  // Pecah keranjang per kategori → tiap kategori jadi 1 pesanan (admin & aturan sendiri).
+  function buildGroups() {
+    const byCat = {}
+    cart.forEach((i) => {
+      const c = i.category || defaultCategory
+      ;(byCat[c] = byCat[c] || []).push(i)
+    })
+    return Object.keys(byCat).map((cat) => {
+      const conf = categories[cat] || categories[defaultCategory] || {}
+      const items = byCat[cat]
+      const sub = items.reduce((s, i) => s + i.price * i.qty, 0)
+      const deliver = method === 'antar' && !!conf.delivery
+      const fee = deliver ? conf.deliveryFee || 0 : 0
+      const url = buildWhatsappUrl({
+        cart: items,
+        spice,
+        method: deliver ? 'antar' : 'ambil',
+        payment,
+        address: address.trim(),
+        coords: deliver ? coords : null,
+        name: name.trim(),
+        phone: phone.trim(),
+        note,
+        subtotal: sub,
+        deliveryFee: fee,
+        total: sub + fee,
+        businessName: `${business.name} (${conf.label || cat})`,
+        whatsapp: conf.whatsapp,
+      })
+      return { cat, label: conf.label || cat, items, sub, deliver, fee, total: sub + fee, url }
+    })
+  }
+
   function handleSubmit() {
     setTouched(true)
     if (!canSubmit) return
-    const url = buildWhatsappUrl({
-      cart,
-      spice,
-      method,
-      payment,
-      address: address.trim(),
-      coords: method === 'antar' ? coords : null,
-      name: name.trim(),
-      phone: phone.trim(),
-      note,
-      subtotal,
-      deliveryFee,
-      total,
-      businessName: business.name,
-      whatsapp: business.whatsapp,
+    const groups = buildGroups()
+
+    // Catat SEMUA sub-pesanan ke Google Sheet (fire-and-forget).
+    groups.forEach((g) => {
+      logOrder({
+        nama: name.trim(),
+        hp: phone.trim(),
+        metode: g.deliver ? 'Diantar' : 'Ambil Sendiri',
+        pembayaran: payment === 'qris' ? 'QRIS' : 'COD',
+        sambal: spice,
+        catatan: note.trim(),
+        alamat: g.deliver ? address.trim() : '',
+        kategori: g.label,
+        items: g.items.map((i) => `${i.qty}x ${i.name}`).join('; '),
+        subtotal: g.sub,
+        ongkir: g.fee,
+        total: g.total,
+      })
     })
 
-    // Catat pesanan ke Google Sheet (kalau orderLogUrl diisi). Fire-and-forget.
-    logOrder({
-      nama: name.trim(),
-      hp: phone.trim(),
-      metode: method === 'antar' ? 'Diantar' : 'Ambil Sendiri',
-      pembayaran: payment === 'qris' ? 'QRIS' : 'COD',
-      sambal: spice,
-      catatan: note.trim(),
-      alamat: method === 'antar' ? address.trim() : '',
-      items: cart.map((i) => `${i.qty}x ${i.name}`).join('; '),
-      subtotal,
-      ongkir: deliveryFee,
-      total,
-    })
-
-    window.open(url, '_blank', 'noopener,noreferrer')
+    if (groups.length === 1) {
+      // Satu kategori → langsung buka WhatsApp
+      window.open(groups[0].url, '_blank', 'noopener,noreferrer')
+    } else {
+      // Beberapa kategori (admin beda) → tampilkan tombol kirim per admin
+      setPendingGroups(groups)
+    }
   }
 
   if (!open) return null
@@ -181,18 +229,27 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
                   <button onClick={() => setMethod('ambil')} className={optionBtn(method === 'ambil')}>
                     🏃 Ambil Sendiri
                   </button>
-                  {/* Diantar dinonaktifkan dulu — sistem masih ambil sendiri */}
-                  <button
-                    type="button"
-                    disabled
-                    className="relative cursor-not-allowed rounded-xl bg-brand-creamdark px-2 py-2.5 text-sm font-semibold text-brand-brown/40 ring-1 ring-brand-brown/10"
-                  >
-                    🛵 Diantar
-                    <span className="mt-0.5 block text-[10px] font-bold text-brand-orange">Segera Hadir</span>
-                  </button>
+                  {canDeliver ? (
+                    // Diantar tersedia (ada item yang bisa diantar, mis. Nasi Bakar)
+                    <button type="button" onClick={() => setMethod('antar')} className={optionBtn(method === 'antar')}>
+                      🛵 Diantar
+                    </button>
+                  ) : (
+                    // Diantar nonaktif untuk kategori yang tidak melayani antar (mis. Pentol)
+                    <button
+                      type="button"
+                      disabled
+                      className="relative cursor-not-allowed rounded-xl bg-brand-creamdark px-2 py-2.5 text-sm font-semibold text-brand-brown/40 ring-1 ring-brand-brown/10"
+                    >
+                      🛵 Diantar
+                      <span className="mt-0.5 block text-[10px] font-bold text-brand-orange">Khusus Nasi Bakar</span>
+                    </button>
+                  )}
                 </div>
                 <p className="mt-1 text-xs text-brand-brown/60">
-                  Untuk sekarang khusus <b>Ambil Sendiri</b> ya. Layanan antar segera hadir! 🛵
+                  {canDeliver
+                    ? '🛵 Layanan antar khusus Nasi Bakar. Item lain (Pentol) tetap ambil sendiri.'
+                    : 'Menu ini khusus Ambil Sendiri. Diantar hanya untuk Nasi Bakar.'}
                 </p>
               </div>
 
@@ -347,28 +404,59 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
 
         {/* Footer tombol kirim */}
         <div className="border-t border-brand-brown/10 bg-white p-4">
-          {/* Banner toko tutup — kunci checkout di luar jam operasional */}
-          {!storeOpen && (
-            <div className="mb-3 rounded-xl bg-brand-brown px-3 py-2 text-center text-sm font-semibold text-brand-cream">
-              🚫 Maaf, sedang TUTUP ({business.openLabel}). Pesanan dibuka lagi saat jam buka ya.
+          {pendingGroups ? (
+            // Keranjang campur (admin beda) → kirim ke tiap admin lewat tombol terpisah
+            <div className="space-y-2">
+              <p className="text-center text-xs font-semibold text-brand-brown/70">
+                Pesananmu dipisah per admin. Tap dua-duanya ya 👇
+              </p>
+              {pendingGroups.map((g) => {
+                const sent = sentCats.includes(g.cat)
+                return (
+                  <a
+                    key={g.cat}
+                    href={g.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setSentCats((s) => (s.includes(g.cat) ? s : [...s, g.cat]))}
+                    className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold ${
+                      sent ? 'bg-green-100 text-green-700' : 'bg-brand-red text-brand-cream'
+                    }`}
+                  >
+                    <span>
+                      {sent ? '✅' : '💬'} Kirim {g.label} · {rupiah(g.total)}
+                    </span>
+                    <span>→</span>
+                  </a>
+                )
+              })}
             </div>
-          )}
-          <button onClick={handleSubmit} disabled={!canSubmit} className="btn-primary w-full py-3.5 text-base">
-            💬 Kirim Pesanan via WhatsApp
-          </button>
-          {/* Alasan spesifik kenapa belum bisa kirim */}
-          {!canSubmit && cart.length > 0 && storeOpen && (
-            <p className="mt-2 text-center text-xs text-brand-red">
-              {!minOrderOk
-                ? `Minimal pesanan ${rupiah(business.minOrder)}. Tambah ${rupiah(business.minOrder - subtotal)} lagi ya.`
-                : !nameOk
-                  ? 'Isi nama dulu ya.'
-                  : !phoneOk
-                    ? 'Isi No. HP aktif yang benar dulu ya.'
-                    : !addressOk
-                      ? 'Isi alamat pengantaran dulu ya.'
-                      : 'Lengkapi data yang wajib diisi dulu ya.'}
-            </p>
+          ) : (
+            <>
+              {/* Banner toko tutup — kunci checkout di luar jam operasional */}
+              {!storeOpen && (
+                <div className="mb-3 rounded-xl bg-brand-brown px-3 py-2 text-center text-sm font-semibold text-brand-cream">
+                  🚫 Maaf, sedang TUTUP ({business.openLabel}). Pesanan dibuka lagi saat jam buka ya.
+                </div>
+              )}
+              <button onClick={handleSubmit} disabled={!canSubmit} className="btn-primary w-full py-3.5 text-base">
+                💬 Kirim Pesanan via WhatsApp
+              </button>
+              {/* Alasan spesifik kenapa belum bisa kirim */}
+              {!canSubmit && cart.length > 0 && storeOpen && (
+                <p className="mt-2 text-center text-xs text-brand-red">
+                  {!minOrderOk
+                    ? `Minimal pesanan ${rupiah(business.minOrder)}. Tambah ${rupiah(business.minOrder - subtotal)} lagi ya.`
+                    : !nameOk
+                      ? 'Isi nama dulu ya.'
+                      : !phoneOk
+                        ? 'Isi No. HP aktif yang benar dulu ya.'
+                        : !addressOk
+                          ? 'Isi alamat pengantaran dulu ya.'
+                          : 'Lengkapi data yang wajib diisi dulu ya.'}
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

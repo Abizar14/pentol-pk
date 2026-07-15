@@ -58,7 +58,13 @@ export default function App() {
     () =>
       menu
         .filter((m) => qtyById[m.id] > 0)
-        .map((m) => ({ id: m.id, name: m.name, price: m.price, qty: qtyById[m.id] })),
+        .map((m) => ({
+          id: m.id,
+          name: m.name,
+          price: m.price,
+          qty: qtyById[m.id],
+          category: m.category || 'pentol',
+        })),
     [qtyById, menu],
   )
 

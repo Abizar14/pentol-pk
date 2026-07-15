@@ -68,6 +68,29 @@ export const paymentMethods = [
 ]
 
 // ============================================================
+//  KATEGORI PRODUK — tiap kategori punya admin WA & aturan delivery sendiri
+// ------------------------------------------------------------
+//  Item di Google Sheet (tab Menu) diberi kolom `category`, mis. 'nasibakar'.
+//  Kalau kolom kosong → otomatis masuk kategori default ('pentol').
+//  Kalau keranjang berisi 2 kategori → checkout kirim ke 2 chat WA terpisah.
+// ============================================================
+export const defaultCategory = 'pentol'
+export const categories = {
+    pentol: {
+        label: 'Pentol',
+        whatsapp: business.whatsapp, // admin utama (pentol)
+        delivery: false, // pentol: ambil sendiri saja
+        deliveryFee: 0,
+    },
+    nasibakar: {
+        label: 'Nasi Bakar',
+        whatsapp: 'GANTI_NOMOR_ADMIN_NASI_BAKAR', // ← isi nomor WA admin nasi bakar (format 62...)
+        delivery: true, // nasi bakar: bisa diantar
+        deliveryFee: 5000, // ongkir nasi bakar
+    },
+}
+
+// ============================================================
 //  GOOGLE SHEETS (opsional) — biar bisa edit menu & jam dari HP
 // ------------------------------------------------------------
 //  Cara pakai (lihat README bagian "Edit dari Google Sheets"):

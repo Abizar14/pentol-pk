@@ -23,6 +23,7 @@ function mapMenu(objs) {
       image: o.image || null,
       oldPrice: num(o.oldprice) || null, // harga coret (opsional)
       badge: o.badge || null, // label khusus, mis. "TERLARIS" (opsional)
+      category: (o.category || '').trim().toLowerCase() || 'pentol', // kategori produk
       // available FALSE/TIDAK/0 = stok kosong → tetap tampil tapi ditandai (bukan disembunyikan)
       available: !['false', 'tidak', '0', 'no'].includes((o.available || '').toLowerCase()),
     }))
