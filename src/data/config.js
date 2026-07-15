@@ -58,14 +58,8 @@ export const promoBanner = '🔥 Kriwil & Daging gurih kenyal, sambal nampol —
 // ID menu yang dapat badge "TERLARIS 🔥". Cocokkan dengan id di sheet/menu.js.
 export const bestsellers = ['pentol-biasa', 'paket-komplit']
 
-// Harga coret (harga normal sebelum hemat) untuk badge HEMAT + harga dicoret.
-// Bisa juga diatur dari kolom `oldprice` di Google Sheet (menimpa nilai di sini).
-export const oldPrices = {
-    'paket-ngemil': 12000,
-    'paket-komplit': 23000,
-    'combo-ngemil': 12000,
-    'combo-komplit': 23000,
-}
+// Harga coret (anchor price buat pemasaran) sekarang diatur dari kolom `oldprice`
+// di Google Sheet — bebas isi angka apa pun. Kosong = tidak ada harga coret.
 
 // Metode pembayaran. QRIS = QRIS statis (scan lalu kirim bukti via WA), COD = bayar di tempat.
 export const paymentMethods = [

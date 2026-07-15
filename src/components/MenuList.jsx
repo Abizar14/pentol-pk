@@ -1,5 +1,5 @@
 import { rupiah } from '../utils/format'
-import { promoBanner, bestsellers, oldPrices, soldOutLabel } from '../data/config'
+import { promoBanner, bestsellers, soldOutLabel } from '../data/config'
 import QtyStepper from './QtyStepper'
 
 // Tentukan badge & harga coret sebuah item.
@@ -10,8 +10,9 @@ function getBadge(item) {
   return null
 }
 function getOldPrice(item) {
-  const old = item.oldPrice || oldPrices[item.id]
-  return old && old > item.price ? old : null
+  // Harga coret murni dari kolom `oldprice` di Google Sheet (buat pemasaran/anchor price).
+  // Cuma tampil kalau lebih besar dari harga jual.
+  return item.oldPrice && item.oldPrice > item.price ? item.oldPrice : null
 }
 
 // Daftar menu (dari props — bisa data lokal atau Google Sheets).

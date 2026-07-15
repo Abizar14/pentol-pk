@@ -236,7 +236,7 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
               {/* Nama */}
               <div>
                 <label className="mb-1.5 block text-sm font-semibold">
-                  Nama Penumpang <span className="text-brand-red">*</span>
+                  Nama <span className="text-brand-red">*</span>
                 </label>
                 <input
                   value={name}
@@ -324,7 +324,7 @@ export default function CheckoutSheet({ open, onClose, cart, onInc, onDec, onRem
                 <input
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="mis. jangan terlalu asin"
+                  placeholder="mis. boleh request"
                   className="w-full rounded-xl border-0 bg-white px-3 py-2.5 ring-1 ring-brand-brown/15 focus:ring-2 focus:ring-brand-red"
                 />
               </div>
